@@ -42,14 +42,14 @@ class MainGameScene extends Phaser.Scene {
 
           // Check if the player has gone out of bounds
           if (player.x < 0) {
-              player.x = 800; // Wrap to the right side
-          } else if (player.x > 800) {
+              player.x = gameWidth; // Wrap to the right side
+          } else if (player.x > gameWidth) {
               player.x = 0; // Wrap to the left side
           }
 
           if (player.y < 0) {
-              player.y = 600; // Wrap to the bottom
-          } else if (player.y > 600) {
+              player.y = gameHeight; // Wrap to the bottom
+          } else if (player.y > gameHeight) {
               player.y = 0; // Wrap to the top
           }          
       };
