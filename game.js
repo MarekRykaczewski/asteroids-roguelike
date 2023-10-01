@@ -14,15 +14,19 @@ class MainGameScene extends Phaser.Scene {
       const player = setupPlayer(this)
 
       // Variable to track if the left mouse button is currently down
-      let isMouseDown = false;
+      let isMouseLeftDown = false;
 
       // Handle player ship movement
-      this.input.on('pointerdown', () => {
-          isMouseDown = true;
+      this.input.on('pointerdown', (pointer) => {
+				if (pointer.leftButtonDown()) {
+          isMouseLeftDown = true;
+				}
       });
 
-      this.input.on('pointerup', () => {
-          isMouseDown = false;
+      this.input.on('pointerup', (pointer) => {
+				if (pointer.leftButtonReleased()) {
+					isMouseLeftDown = false;
+				}
       });
 
       this.input.on('pointermove', (pointer) => {
@@ -36,7 +40,7 @@ class MainGameScene extends Phaser.Scene {
 
       this.update = () => {
           // Apply acceleration
-          if (isMouseDown) {
+          if (isMouseLeftDown) {
               // Move the player ship towards the pointer's location
               this.physics.moveTo(player, this.input.x, this.input.y, shipSpeed);
           }
