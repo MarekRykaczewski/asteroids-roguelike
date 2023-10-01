@@ -8,7 +8,6 @@ class MainGameScene extends Phaser.Scene {
 
       const player = this.physics.add.image(400, 300, 'player');
       player.setScale(1);
-      player.setCollideWorldBounds(true);
       player.setDrag(100);
 
       // Define the ship's movement speed
@@ -34,12 +33,26 @@ class MainGameScene extends Phaser.Scene {
           player.rotation = angle + Math.PI / 2; // Add 90 degrees (PI/2 radians)
       });
 
-      // Apply accelerations
+
       this.update = () => {
+          // Apply acceleration
           if (isMouseDown) {
               // Move the player ship towards the pointer's location
               this.physics.moveTo(player, this.input.x, this.input.y, shipSpeed);
           }
+
+          // Check if the player has gone out of bounds
+          if (player.x < 0) {
+              player.x = 800; // Wrap to the right side
+          } else if (player.x > 800) {
+              player.x = 0; // Wrap to the left side
+          }
+
+          if (player.y < 0) {
+              player.y = 600; // Wrap to the bottom
+          } else if (player.y > 600) {
+              player.y = 0; // Wrap to the top
+          }          
       };
   }
 }
