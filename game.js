@@ -22,10 +22,10 @@ class MainGameScene extends Phaser.Scene {
 			let isMouseRightDown = false;
 			let lastShotTime = 0;
 
-			// Handle player ship movement
+			// Handle mouse state changes
 			this.input.on('pointerdown', (pointer) => {
 				if (pointer.leftButtonDown()) {
-					isMouseLeftDown = true;				
+					isMouseLeftDown = true;
 				}
 				if (pointer.rightButtonDown()) {
 					isMouseRightDown = true;
@@ -33,10 +33,10 @@ class MainGameScene extends Phaser.Scene {
 			});
 
 			this.input.on('pointerup', (pointer) => {
-				if (pointer.leftButtonReleased()) {
+				if (!pointer.leftButtonDown()) {
 					isMouseLeftDown = false;
 				}
-				if (pointer.rightButtonReleased()) {
+				if (!pointer.rightButtonDown()) {
 					isMouseRightDown = false;
 				}
 			});
