@@ -1,10 +1,13 @@
 const gameWidth = 800;
 const gameHeight = 600;
 const shipSpeed = 200;
+const projectileSpeed = 500;
+const fireRate = 300; // Fire rate in milliseconds
 
 class MainGameScene extends Phaser.Scene {
   preload() {
       this.load.image('player', '/player.png');
+			this.load.image('projectile', '/projectile.png');
   }
 
   create() {
@@ -12,9 +15,12 @@ class MainGameScene extends Phaser.Scene {
 			this.input.mouse.disableContextMenu();
 
       const player = setupPlayer(this)
+			const projectiles = this.physics.add.group(); // Group to manage projectiles
 
       // Variable to track if the left mouse button is currently down
       let isMouseLeftDown = false;
+
+			let isShooting = false;
 
       // Handle player ship movement
       this.input.on('pointerdown', (pointer) => {
@@ -28,6 +34,28 @@ class MainGameScene extends Phaser.Scene {
 					isMouseLeftDown = false;
 				}
       });
+
+			this.input.on('pointerdown', (pointer) => {
+				if (pointer.rightButtonDown()) {
+					isShooting = true
+				}
+			});
+
+			this.input.on('pointerup', (pointer) => {
+				if (pointer.rightButtonReleased()) {
+					isShooting = false
+				}
+			});
+
+			this.time.addEvent({
+				delay: fireRate,
+				callback: () => {
+					if (isShooting) {
+						fireProjectile(player, projectiles);
+					}
+				},
+				loop: true,
+			});
 
       this.input.on('pointermove', (pointer) => {
           // Calculate the angle between the ship and the cursor
@@ -66,6 +94,15 @@ function setupPlayer(scene) {
   player.setScale(1);
   player.setDrag(100);
   return player;
+}
+
+function fireProjectile(player, projectiles) {
+  const projectile = projectiles.create(player.x, player.y, 'projectile');
+  const angle = player.rotation - Math.PI / 2;
+  const velocityX = Math.cos(angle) * projectileSpeed;
+  const velocityY = Math.sin(angle) * projectileSpeed;
+	projectile.setScale(0.1);
+  projectile.setVelocity(velocityX, velocityY);
 }
 
 const config = {
