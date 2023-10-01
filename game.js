@@ -9,6 +9,7 @@ class MainGameScene extends Phaser.Scene {
 
   create() {
       this.physics.world.setBounds(0, 0, gameWidth, gameHeight);
+			this.input.mouse.disableContextMenu();
 
       const player = setupPlayer(this)
 
