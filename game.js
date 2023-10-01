@@ -1,17 +1,16 @@
+const gameWidth = 800;
+const gameHeight = 600;
+const shipSpeed = 200;
+
 class MainGameScene extends Phaser.Scene {
   preload() {
       this.load.image('player', '/player.png');
   }
 
   create() {
-      this.physics.world.setBounds(0, 0, 800, 600);
+      this.physics.world.setBounds(0, 0, gameWidth, gameHeight);
 
-      const player = this.physics.add.image(400, 300, 'player');
-      player.setScale(1);
-      player.setDrag(100);
-
-      // Define the ship's movement speed
-      const shipSpeed = 200;
+      const player = setupPlayer(this)
 
       // Variable to track if the left mouse button is currently down
       let isMouseDown = false;
@@ -57,10 +56,18 @@ class MainGameScene extends Phaser.Scene {
   }
 }
 
+function setupPlayer(scene) {
+  const player = scene.physics.add.image(gameWidth / 2, gameHeight / 2, 'player');
+  player.setScale(1);
+  player.setCollideWorldBounds(true);
+  player.setDrag(100);
+  return player;
+}
+
 const config = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  width: gameWidth,
+  height: gameHeight,
   scene: MainGameScene,
   physics: {
       default: 'arcade',
