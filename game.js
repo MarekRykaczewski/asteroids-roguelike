@@ -59,7 +59,6 @@ class MainGameScene extends Phaser.Scene {
 function setupPlayer(scene) {
   const player = scene.physics.add.image(gameWidth / 2, gameHeight / 2, 'player');
   player.setScale(1);
-  player.setCollideWorldBounds(true);
   player.setDrag(100);
   return player;
 }
