@@ -17,44 +17,28 @@ class MainGameScene extends Phaser.Scene {
       const player = setupPlayer(this)
 			const projectiles = this.physics.add.group(); // Group to manage projectiles
 
-      // Variable to track if the left mouse button is currently down
-      let isMouseLeftDown = false;
+			// Variables to track mouse button states
+			let isMouseLeftDown = false;
+			let isMouseRightDown = false;
+			let lastShotTime = 0;
 
-			let isShooting = false;
-
-      // Handle player ship movement
-      this.input.on('pointerdown', (pointer) => {
-				if (pointer.leftButtonDown()) {
-          isMouseLeftDown = true;
-				}
-      });
-
-      this.input.on('pointerup', (pointer) => {
-				if (pointer.leftButtonReleased()) {
-					isMouseLeftDown = false;
-				}
-      });
-
+			// Handle player ship movement
 			this.input.on('pointerdown', (pointer) => {
+				if (pointer.leftButtonDown()) {
+					isMouseLeftDown = true;				
+				}
 				if (pointer.rightButtonDown()) {
-					isShooting = true
+					isMouseRightDown = true;
 				}
 			});
 
 			this.input.on('pointerup', (pointer) => {
-				if (pointer.rightButtonReleased()) {
-					isShooting = false
+				if (pointer.leftButtonReleased()) {
+					isMouseLeftDown = false;
 				}
-			});
-
-			this.time.addEvent({
-				delay: fireRate,
-				callback: () => {
-					if (isShooting) {
-						fireProjectile(player, projectiles);
-					}
-				},
-				loop: true,
+				if (pointer.rightButtonReleased()) {
+					isMouseRightDown = false;
+				}
 			});
 
       this.input.on('pointermove', (pointer) => {
@@ -66,12 +50,17 @@ class MainGameScene extends Phaser.Scene {
       });
 
 
-      this.update = () => {
+      this.update = (time) => {
           // Apply acceleration
           if (isMouseLeftDown) {
               // Move the player ship towards the pointer's location
               this.physics.moveTo(player, this.input.x, this.input.y, shipSpeed);
           }
+
+					if (isMouseRightDown && time - lastShotTime > fireRate) {
+						fireProjectile(player, projectiles);
+						lastShotTime = time;
+					}
 
           // Check if the player has gone out of bounds
           if (player.x < 0) {
