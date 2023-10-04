@@ -1,3 +1,5 @@
+import Enemy from './classes/Enemy.js'
+
 const gameWidth = 800;
 const gameHeight = 600;
 const shipSpeed = 200;
@@ -8,6 +10,7 @@ class MainGameScene extends Phaser.Scene {
   preload() {
       this.load.image('player', '/player.png');
 			this.load.image('projectile', '/projectile.png');
+      this.load.image('enemy', '/enemy.png');
   }
 
   create() {
@@ -16,6 +19,7 @@ class MainGameScene extends Phaser.Scene {
 
       const player = setupPlayer(this)
 			const projectiles = this.physics.add.group(); // Group to manage projectiles
+      const enemies = this.physics.add.group(); // Group to manage enemies
 
 			// Variables to track mouse button states
 			let isMouseLeftDown = false;
@@ -49,6 +53,18 @@ class MainGameScene extends Phaser.Scene {
           player.rotation = angle + Math.PI / 2; // Add 90 degrees (PI/2 radians)
       });
 
+      // Create a timer to spawn enemies every 3 seconds
+      this.enemySpawnTimer = this.time.addEvent({
+        delay: 3000,
+        callback: () => {
+          const enemyX = Phaser.Math.Between(0, gameWidth);
+          const enemyY = Phaser.Math.Between(0, gameHeight);
+          const enemy = new Enemy(this, enemyX, enemyY);
+          enemies.add(enemy);
+        },
+        loop: true,
+      });
+
 
       this.update = (time) => {
           // Apply acceleration
@@ -73,7 +89,11 @@ class MainGameScene extends Phaser.Scene {
               player.y = gameHeight; // Wrap to the bottom
           } else if (player.y > gameHeight) {
               player.y = 0; // Wrap to the top
-          }          
+          }   
+          
+          enemies.children.iterate((enemy) => {
+            enemy.update();
+          });
       };
   }
 }
